@@ -1,0 +1,79 @@
+.account-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 48px 16px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #fff3ed 0%, #ffe3d3 50%, #ffd0bb 100%);
+}
+
+@media (min-height: 720px) {
+  .account-page {
+    align-items: center;
+  }
+}
+
+.account-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px 28px 24px;
+  border-radius: 16px !important;
+}
+
+.brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.brand-logo {
+  height: 64px;
+  width: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error {
+  color: #c62828;
+  margin: 8px 0;
+}
+
+.inline-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.social-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0 12px;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 13px;
+}
+
+.social-divider::before,
+.social-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.social-divider span {
+  padding: 0 12px;
+}
+
+.social-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.google-btn {
+  display: flex;
+  justify-content: center;
+  min-height: 40px;
+}

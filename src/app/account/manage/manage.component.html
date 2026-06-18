@@ -1,0 +1,186 @@
+<div class="manage-page">
+  <div class="manage-hero">
+    <h1>{{translateService.getText('account.manage.title')}}</h1>
+    <p class="hero-subtitle">{{translateService.getText('account.manage.subtitle')}}</p>
+  </div>
+
+  <div class="manage-content">
+
+    <!-- Account / main user -->
+    <mat-card class="card account-card" *ngIf="mainUser">
+      <div class="account-avatar">{{ userInitials }}</div>
+      <div class="account-info">
+        <span class="account-greeting">{{translateService.getText('account.manage.greeting')}}</span>
+        <span class="account-name">{{ userFullName }}</span>
+        <span class="account-email">{{ mainUser.email }}</span>
+      </div>
+    </mat-card>
+
+    <div *ngIf="loading" class="loading-wrap">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+
+    <ng-container *ngIf="loaded && !loading">
+
+      <!-- No active subscription -->
+      <mat-card *ngIf="!subscription" class="card empty-card">
+        <div class="empty-icon">
+          <mat-icon>workspace_premium</mat-icon>
+        </div>
+        <h2 class="empty-title">{{translateService.getText('account.manage.none')}}</h2>
+        <p class="muted">{{translateService.getText('account.manage.emptyHint')}}</p>
+        <button class="btn-orange" (click)="goToPlans()">
+          <mat-icon>add_circle</mat-icon>
+          <span>{{translateService.getText('account.manage.subscribe')}}</span>
+        </button>
+      </mat-card>
+
+      <!-- Active subscription -->
+      <mat-card *ngIf="subscription" class="card detail-card">
+        <div class="detail-head">
+          <div class="plan-info">
+            <span class="plan-name">{{ subscription.plan?.name || translateService.getText('account.manage.plan') }}</span>
+            <span *ngIf="subscription.isTrial" class="trial-badge">{{translateService.getText('account.manage.trial')}}</span>
+          </div>
+          <span class="status-badge status-{{ subscription.status }}">{{ subscription.status }}</span>
+        </div>
+
+        <div class="price-row" *ngIf="subscription.plan?.price != null">
+          <span class="price">{{ subscription.plan?.price | currency:subscription.currency }}</span>
+          <span class="price-period">/ {{translateService.getText('account.manage.perMonth')}}</span>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail">
+            <mat-icon class="detail-ico">event_available</mat-icon>
+            <div>
+              <span class="label">{{translateService.getText('account.manage.start')}}</span>
+              <span class="value">{{ subscription.startDate ? (subscription.startDate | date:'mediumDate') : '-' }}</span>
+            </div>
+          </div>
+          <div class="detail">
+            <mat-icon class="detail-ico">autorenew</mat-icon>
+            <div>
+              <span class="label">{{translateService.getText('account.manage.nextBilling')}}</span>
+              <span class="value">{{ subscription.nextBillingDate ? (subscription.nextBillingDate | date:'mediumDate') : '-' }}</span>
+            </div>
+          </div>
+          <div class="detail">
+            <mat-icon class="detail-ico">schedule</mat-icon>
+            <div>
+              <span class="label">{{translateService.getText('account.manage.expiration')}}</span>
+              <span class="value">{{ subscription.expirationDate ? (subscription.expirationDate | date:'mediumDate') : '-' }}</span>
+            </div>
+          </div>
+          <div class="detail">
+            <mat-icon class="detail-ico">payments</mat-icon>
+            <div>
+              <span class="label">{{translateService.getText('account.manage.lastPayment')}}</span>
+              <span class="value">{{ subscription.lastPaymentAmount != null ? (subscription.lastPaymentAmount | currency:subscription.currency) : '-' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-orange-outline" (click)="goToPlans()">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>{{translateService.getText('account.manage.changePlan')}}</span>
+          </button>
+          <button class="btn-danger" *ngIf="canCancel" (click)="cancel()">
+            <mat-icon>cancel</mat-icon>
+            <span>{{translateService.getText('account.manage.cancel')}}</span>
+          </button>
+          <button class="btn-orange" *ngIf="canReactivate" (click)="reactivate()">
+            <mat-icon>autorenew</mat-icon>
+            <span>{{translateService.getText('account.manage.reactivate')}}</span>
+          </button>
+        </div>
+      </mat-card>
+
+      <!-- Family sub-accounts (family plans only) -->
+      <mat-card class="card family-card" *ngIf="subscription && isFamilyPlan">
+        <div class="family-head">
+          <div>
+            <h3 class="card-section-title">{{translateService.getText('account.family.title')}}</h3>
+            <p class="muted family-sub">{{translateService.getText('account.family.subtitle')}}</p>
+          </div>
+          <span class="family-count">{{ activeFamilyCount }} / {{ maxFamilyMembers }}</span>
+        </div>
+
+        <!-- Invite form -->
+        <div class="invite-row">
+          <mat-form-field appearance="outline" class="invite-field">
+            <mat-label>{{translateService.getText('account.family.emailLabel')}}</mat-label>
+            <input matInput type="email" [(ngModel)]="inviteEmail" name="inviteEmail"
+                   [disabled]="!canInviteMore || inviting"
+                   (keyup.enter)="invite()"
+                   placeholder="name@email.com" />
+          </mat-form-field>
+          <button class="btn-orange invite-btn" (click)="invite()" [disabled]="!canInviteMore || inviting">
+            <mat-icon>person_add</mat-icon>
+            <span>{{translateService.getText('account.family.invite')}}</span>
+          </button>
+        </div>
+        <p class="muted limit-hint" *ngIf="!canInviteMore && activeFamilyCount >= maxFamilyMembers">
+          {{translateService.getText('account.family.limitReached')}}
+        </p>
+
+        <div *ngIf="familyLoading" class="loading-wrap small">
+          <mat-spinner diameter="32"></mat-spinner>
+        </div>
+
+        <!-- Member list -->
+        <ul class="member-list" *ngIf="!familyLoading && familyMembers.length > 0">
+          <li class="member" *ngFor="let m of familyMembers">
+            <div class="member-avatar">{{ (m.email || '?').charAt(0).toUpperCase() }}</div>
+            <div class="member-info">
+              <span class="member-email">{{ m.email }}</span>
+              <span class="member-date">{{ m.invitedDate | date:'mediumDate' }}</span>
+            </div>
+            <span class="member-status status-{{ m.status }}">
+              {{ translateService.getText('account.family.status.' + m.status) }}
+            </span>
+            <button class="member-remove" (click)="removeMember(m)" [attr.aria-label]="translateService.getText('account.family.remove')">
+              <mat-icon>close</mat-icon>
+            </button>
+          </li>
+        </ul>
+
+        <p class="muted empty-payments" *ngIf="!familyLoading && familyMembers.length === 0">
+          {{translateService.getText('account.family.empty')}}
+        </p>
+      </mat-card>
+
+      <!-- Payment history -->
+      <mat-card class="card payments-card" *ngIf="subscription">
+        <h3 class="card-section-title">{{translateService.getText('account.manage.payments.title')}}</h3>
+
+        <table mat-table [dataSource]="payments" class="full-width payments-table" *ngIf="payments.length > 0">
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>{{translateService.getText('account.manage.payments.date')}}</th>
+            <td mat-cell *matCellDef="let p">{{ p.paymentDate | date:'medium' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>{{translateService.getText('account.manage.payments.amount')}}</th>
+            <td mat-cell *matCellDef="let p">{{ p.amount | currency:p.currency }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>{{translateService.getText('account.manage.payments.status')}}</th>
+            <td mat-cell *matCellDef="let p"><span class="pill pill-{{ p.status }}">{{ p.status }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="transaction">
+            <th mat-header-cell *matHeaderCellDef>{{translateService.getText('account.manage.payments.transaction')}}</th>
+            <td mat-cell *matCellDef="let p">{{ p.payPalTransactionId || '-' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: paymentColumns;"></tr>
+        </table>
+
+        <p class="muted empty-payments" *ngIf="payments.length === 0">
+          {{translateService.getText('account.manage.payments.empty')}}
+        </p>
+      </mat-card>
+
+    </ng-container>
+  </div>
+</div>

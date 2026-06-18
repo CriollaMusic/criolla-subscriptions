@@ -1,0 +1,54 @@
+<div class="accept-page">
+  <mat-card class="accept-card">
+    <div class="brand">
+      <img src="assets/criolla_logo.svg" alt="Criolla Music" class="brand-logo" />
+    </div>
+
+    <div *ngIf="loading" class="loading-wrap">
+      <mat-spinner diameter="44"></mat-spinner>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+      <!-- Invalid / not found -->
+      <div *ngIf="!isValid" class="state state-error">
+        <mat-icon class="state-icon">link_off</mat-icon>
+        <h2>{{translateService.getText('account.accept.invalidTitle')}}</h2>
+        <p class="muted">{{translateService.getText('account.accept.invalidText')}}</p>
+        <button class="btn-orange" (click)="goToLogin()">
+          <span>{{translateService.getText('account.accept.goLogin')}}</span>
+        </button>
+      </div>
+
+      <!-- Valid invite -->
+      <div *ngIf="isValid && !accepted" class="state">
+        <mat-icon class="state-icon ok">group_add</mat-icon>
+        <h2>{{translateService.getText('account.accept.title')}}</h2>
+        <p class="invite-text" [innerHTML]="translateService.getText('account.accept.intro')"></p>
+        <div class="invite-detail" *ngIf="invite?.ownerName">
+          <span class="label">{{translateService.getText('account.accept.from')}}</span>
+          <span class="value">{{ invite?.ownerName }}</span>
+        </div>
+        <div class="invite-detail">
+          <span class="label">{{translateService.getText('account.accept.forEmail')}}</span>
+          <span class="value">{{ invite?.email }}</span>
+        </div>
+        <button class="btn-orange wide" (click)="accept()" [disabled]="accepting">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{translateService.getText('account.accept.button')}}</span>
+        </button>
+      </div>
+
+      <!-- Accepted -->
+      <div *ngIf="accepted" class="state state-success">
+        <mat-icon class="state-icon ok">verified</mat-icon>
+        <h2>{{translateService.getText('account.accept.doneTitle')}}</h2>
+        <p class="muted">{{ resultMessage || translateService.getText('account.accept.success') }}</p>
+        <button class="btn-orange" (click)="goToLogin()">
+          <span>{{translateService.getText('account.accept.goLogin')}}</span>
+        </button>
+      </div>
+
+    </ng-container>
+  </mat-card>
+</div>

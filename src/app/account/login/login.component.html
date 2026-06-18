@@ -1,0 +1,40 @@
+<div class="account-page">
+  <mat-card class="account-card">
+    <div class="brand">
+      <img src="assets/criolla_logo.svg" alt="Criolla Music" class="brand-logo" />
+    </div>
+    <mat-card-title>{{translateService.getText('account.login.title')}}</mat-card-title>
+    <mat-card-subtitle>{{translateService.getText('account.login.subtitle')}}</mat-card-subtitle>
+
+    <mat-card-content>
+      <form [formGroup]="formGroup" (ngSubmit)="login()">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>{{translateService.getText('account.login.email')}}</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>{{translateService.getText('account.login.password')}}</mat-label>
+          <input matInput type="password" formControlName="password" autocomplete="current-password">
+        </mat-form-field>
+
+        <p class="error" *ngIf="hasError">{{translateService.getText('account.login.error')}}</p>
+
+        <button mat-raised-button color="primary" class="full-width" type="submit" [disabled]="loading">
+          <mat-icon *ngIf="!loading">login</mat-icon>
+          <mat-spinner *ngIf="loading" diameter="20" class="inline-spinner"></mat-spinner>
+          <span>{{translateService.getText('account.login.submit')}}</span>
+        </button>
+      </form>
+
+      <div class="social-divider" *ngIf="googleEnabled">
+        <span>{{translateService.getText('account.login.or')}}</span>
+      </div>
+
+      <div class="social-login" *ngIf="googleEnabled">
+        <div #googleBtn class="google-btn"></div>
+        <p class="error" *ngIf="googleError">{{translateService.getText('account.login.googleError')}}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

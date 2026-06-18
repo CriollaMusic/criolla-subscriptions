@@ -1,0 +1,202 @@
+:host {
+  display: block;
+}
+
+.subscribe-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff6f1 0%, #ffe9dd 100%);
+  padding-bottom: 48px;
+}
+
+/* Hero */
+.subscribe-hero {
+  background: linear-gradient(120deg, #ff7043 0%, #ff5722 60%, #f4511e 100%);
+  color: #fff;
+  padding: 40px 16px 64px;
+  text-align: center;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  box-shadow: 0 8px 24px rgba(244, 81, 30, 0.25);
+}
+
+.subscribe-hero h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.hero-subtitle {
+  margin: 8px 0 16px;
+  opacity: 0.92;
+  font-size: 15px;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.hero-link:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.hero-link mat-icon {
+  font-size: 19px;
+  width: 19px;
+  height: 19px;
+}
+
+/* Content */
+.subscribe-content {
+  max-width: 1000px;
+  margin: -40px auto 0;
+  padding: 0 16px;
+}
+
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.muted {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.paypal-alert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #f5c6c2;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.paypal-alert mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Plans */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(244, 81, 30, 0.10), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-top: 4px solid #ff5722;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(244, 81, 30, 0.18), 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+
+.plan-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.plan-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2b2b2b;
+}
+
+.plan-freq {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #ff5722;
+  background: #fff1ec;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.plan-price {
+  margin: 14px 0 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.plan-price .amount {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ff5722;
+}
+
+.plan-price .period {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  text-transform: lowercase;
+}
+
+.plan-desc {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.plan-trial {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+
+.plan-trial mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.plan-foot {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.paypal-container {
+  min-height: 45px;
+}
+
+.empty-plans {
+  text-align: center;
+  padding: 40px 0;
+}

@@ -1,0 +1,12 @@
+<mat-toolbar class="app-bar">
+  <a class="brand" routerLink="/manage">
+    <img src="assets/criolla_logo.svg" alt="Criolla Music" class="brand-logo" />
+  </a>
+  <span class="spacer"></span>
+  <button *ngIf="isLoggedIn" mat-button class="logout-btn" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>{{ translateService.getText('account.logout') }}</span>
+  </button>
+</mat-toolbar>
+
+<router-outlet></router-outlet>

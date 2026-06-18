@@ -1,0 +1,8 @@
+{
+  "/UserService": {
+    "target": "https://api.criollamusic.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

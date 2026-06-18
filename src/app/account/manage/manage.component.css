@@ -1,0 +1,501 @@
+:host {
+  display: block;
+}
+
+.manage-page {
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(135deg, #fff6f1 0%, #ffe9dd 100%);
+  padding-bottom: 48px;
+}
+
+/* Hero */
+.manage-hero {
+  background: linear-gradient(120deg, #ff7043 0%, #ff5722 60%, #f4511e 100%);
+  color: #fff;
+  padding: 40px 16px 64px;
+  text-align: center;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  box-shadow: 0 8px 24px rgba(244, 81, 30, 0.25);
+}
+
+.manage-hero h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.hero-subtitle {
+  margin: 8px 0 0;
+  opacity: 0.92;
+  font-size: 15px;
+}
+
+/* Content */
+.manage-content {
+  max-width: 860px;
+  margin: -40px auto 0;
+  padding: 0 16px;
+}
+
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.card {
+  border-radius: 18px !important;
+  box-shadow: 0 10px 30px rgba(244, 81, 30, 0.10), 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 24px;
+  padding: 24px;
+  background: #fff;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.muted {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Account / main user card */
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.account-avatar {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #ff7043, #f4511e);
+  box-shadow: 0 4px 12px rgba(244, 81, 30, 0.3);
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.account-greeting {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.account-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2b2b2b;
+}
+
+.account-email {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Family sub-accounts */
+.family-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.family-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+}
+
+.family-count {
+  flex: 0 0 auto;
+  background: #fff1ea;
+  color: #f4511e;
+  border: 1px solid #ffd9c7;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.invite-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.invite-field {
+  flex: 1 1 auto;
+}
+
+.invite-btn {
+  margin-top: 4px;
+  flex: 0 0 auto;
+}
+
+.limit-hint {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.loading-wrap.small {
+  padding: 16px 0;
+}
+
+.member-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.member-avatar {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #ff8a65, #f4511e);
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.member-email {
+  font-weight: 600;
+  color: #2b2b2b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-date {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.member-status {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.member-status.status-PENDING {
+  background: #fff8e1;
+  color: #b8860b;
+}
+
+.member-status.status-ACCEPTED {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.member-status.status-DECLINED {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.member-remove {
+  flex: 0 0 auto;
+  border: none;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 50%;
+  padding: 4px;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.member-remove:hover {
+  color: #c62828;
+  background: #ffebee;
+}
+
+@media (max-width: 560px) {
+  .invite-row {
+    flex-direction: column;
+  }
+
+  .invite-field {
+    width: 100%;
+  }
+
+  .invite-btn {
+    width: 100%;
+  }
+}
+
+/* Empty state */
+.empty-card {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.empty-icon {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffe0d3, #ffccb8);
+}
+
+.empty-icon mat-icon {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+  color: #ff5722;
+}
+
+.empty-title {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+
+/* Detail card */
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.plan-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plan-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2b2b2b;
+}
+
+.trial-badge {
+  background: #fff3e0;
+  color: #ef6c00;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.status-badge {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 5px 14px;
+  border-radius: 14px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.status-ACTIVE { background: #2e7d32; }
+.status-CANCELLED,
+.status-SUSPENDED,
+.status-EXPIRED { background: #c62828; }
+.status-APPROVAL_PENDING { background: #ef6c00; }
+
+.price-row {
+  margin: 16px 0 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.price {
+  font-size: 30px;
+  font-weight: 800;
+  color: #ff5722;
+}
+
+.price-period {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff8f5;
+  border: 1px solid #ffe0d3;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.detail-ico {
+  color: #ff7043;
+}
+
+.detail > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail .label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.detail .value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2b2b2b;
+}
+
+/* Actions / buttons */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-orange,
+.btn-orange-outline,
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 20px;
+  border-radius: 24px;
+  transition: all 0.15s ease;
+}
+
+.btn-orange {
+  background: #ff5722;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.35);
+}
+
+.btn-orange:hover {
+  background: #f4511e;
+}
+
+.btn-orange-outline {
+  background: #fff;
+  color: #ff5722;
+  border: 1.5px solid #ff5722;
+}
+
+.btn-orange-outline:hover {
+  background: #fff3ee;
+}
+
+.btn-danger {
+  background: #fff;
+  color: #c62828;
+  border: 1.5px solid #ef9a9a;
+}
+
+.btn-danger:hover {
+  background: #fff0f0;
+}
+
+.btn-orange mat-icon,
+.btn-orange-outline mat-icon,
+.btn-danger mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Payments */
+.card-section-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2b2b2b;
+}
+
+.payments-table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.payments-table th {
+  font-weight: 700;
+  color: #6d4c41;
+}
+
+.pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 10px;
+  color: #fff;
+  background: #9e9e9e;
+}
+
+.pill-COMPLETED,
+.pill-ACTIVE { background: #2e7d32; }
+.pill-FAILED,
+.pill-DENIED { background: #c62828; }
+.pill-PENDING { background: #ef6c00; }
+
+.empty-payments {
+  text-align: center;
+  padding: 12px 0;
+}

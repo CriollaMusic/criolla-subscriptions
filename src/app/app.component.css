@@ -1,0 +1,31 @@
+.app-bar {
+  background: #ffffff;
+  color: #ff5722;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+
+.brand-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.logout-btn {
+  color: #ff5722;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

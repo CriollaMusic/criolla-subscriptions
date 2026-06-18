@@ -1,0 +1,23 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #fff6f1;
+  color: #2b2b2b;
+}
+
+/* Keep SweetAlert dialogs above the PayPal SDK overlay */
+.swal2-container {
+  z-index: 20000 !important;
+}
+
+/* Brand the Material "primary" raised button (login submit) with Criolla orange */
+.mat-mdc-raised-button.mat-primary {
+  --mdc-protected-button-container-color: #ff5722;
+  --mdc-protected-button-label-text-color: #ffffff;
+  background-color: #ff5722;
+  color: #ffffff;
+}

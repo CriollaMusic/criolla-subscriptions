@@ -1,0 +1,54 @@
+<div class="subscribe-page">
+  <div class="subscribe-hero">
+    <h1>{{translateService.getText('account.subscribe.title')}}</h1>
+    <p class="hero-subtitle">{{translateService.getText('account.subscribe.subtitle')}}</p>
+    <a class="hero-link" [routerLink]="['/manage']">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>{{translateService.getText('account.subscribe.manageLink')}}</span>
+    </a>
+  </div>
+
+  <div class="subscribe-content">
+
+    <div *ngIf="loading" class="loading-wrap">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+
+    <div class="paypal-alert" *ngIf="paypalError">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{translateService.getText('account.subscribe.paypalError')}}</span>
+    </div>
+
+    <div class="plans-grid" *ngIf="!loading">
+      <div class="plan-card" *ngFor="let plan of plans">
+        <div class="plan-top">
+          <span class="plan-name">{{ plan.accountType?.name || plan.payPalPlanId }}</span>
+          <span class="plan-freq">{{ plan.billingFrequency }}</span>
+        </div>
+
+        <div class="plan-price">
+          <span class="amount">{{ plan.price | currency:plan.currency }}</span>
+          <span class="period">/ {{ plan.billingFrequency }}</span>
+        </div>
+
+        <p class="plan-desc" *ngIf="plan.description">{{ plan.description }}</p>
+
+        <div class="plan-trial" *ngIf="plan.hasTrial">
+          <mat-icon>card_giftcard</mat-icon>
+          <span>{{translateService.getText('account.subscribe.trial')}}: {{ plan.trialDays }} {{translateService.getText('subscription.plans.days')}}</span>
+        </div>
+
+        <div class="plan-foot">
+          <div class="paypal-container" [id]="'paypal-button-' + plan.id"></div>
+          <p class="muted" *ngIf="!plan.payPalPlanId">
+            {{translateService.getText('account.subscribe.unavailable')}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="muted empty-plans" *ngIf="!loading && plans.length === 0">
+      {{translateService.getText('subscription.plans.empty')}}
+    </p>
+  </div>
+</div>
