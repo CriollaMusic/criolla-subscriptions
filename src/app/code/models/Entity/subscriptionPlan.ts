@@ -8,6 +8,8 @@ export class PlanAccountType {
 
 export class SubscriptionPlan extends BaseEntity {
     payPalPlanId!: string;
+    onvoPriceId?: string;
+    paymentProvider?: string;
     accountType?: PlanAccountType;
     billingFrequency!: string;
     price!: number;

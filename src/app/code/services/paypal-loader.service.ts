@@ -12,10 +12,7 @@ export class PaypalLoaderService {
 
   private loadPromise?: Promise<any>;
 
-  /**
-   * Dynamically loads the PayPal JS SDK configured for subscriptions.
-   * Resolves with the global `paypal` object.
-   */
+  /** PayPal Subscriptions SDK — load once per page session. */
   load(): Promise<any> {
     if (window.paypal) {
       return Promise.resolve(window.paypal);
@@ -34,7 +31,8 @@ export class PaypalLoaderService {
       }
 
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&vault=true&intent=subscription`;
+      const currency = environment.payPalCurrency || 'USD';
+      script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(clientId)}&currency=${encodeURIComponent(currency)}&vault=true&intent=subscription&components=buttons`;
       script.async = true;
       script.onload = () => resolve(window.paypal);
       script.onerror = () => {

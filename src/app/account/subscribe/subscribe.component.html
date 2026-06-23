@@ -14,24 +14,28 @@
       <mat-spinner diameter="48"></mat-spinner>
     </div>
 
-    <div class="paypal-alert" *ngIf="paypalError">
-      <mat-icon>error_outline</mat-icon>
-      <span>{{translateService.getText('account.subscribe.paypalError')}}</span>
-    </div>
-
     <div class="plans-grid" *ngIf="!loading">
-      <div class="plan-card" *ngFor="let plan of plans">
+      <div class="plan-card"
+           *ngFor="let plan of plans"
+           [id]="'plan-card-' + plan.id"
+           [class.plan-highlighted]="isHighlighted(plan)"
+           [class.plan-selectable]="isPlanAvailable(plan)"
+           (click)="isPlanAvailable(plan) && openPaymentModal(plan)">
         <div class="plan-top">
           <span class="plan-name">{{ plan.accountType?.name || plan.payPalPlanId }}</span>
-          <span class="plan-freq">{{ plan.billingFrequency }}</span>
+          <span class="plan-freq">{{ translateService.formatBillingFrequency(plan.billingFrequency, 'badge') }}</span>
+        </div>
+
+        <div class="plan-selected-badge" *ngIf="isHighlighted(plan)">
+          {{translateService.getText('account.subscribe.selectedPlan')}}
         </div>
 
         <div class="plan-price">
           <span class="amount">{{ plan.price | currency:plan.currency }}</span>
-          <span class="period">/ {{ plan.billingFrequency }}</span>
+          <span class="period">/ {{ translateService.formatBillingFrequency(plan.billingFrequency) }}</span>
         </div>
 
-        <p class="plan-desc" *ngIf="plan.description">{{ plan.description }}</p>
+        <p class="plan-desc">{{ translateService.getPlanDescription(plan) }}</p>
 
         <div class="plan-trial" *ngIf="plan.hasTrial">
           <mat-icon>card_giftcard</mat-icon>
@@ -39,8 +43,13 @@
         </div>
 
         <div class="plan-foot">
-          <div class="paypal-container" [id]="'paypal-button-' + plan.id"></div>
-          <p class="muted" *ngIf="!plan.payPalPlanId">
+          <button type="button"
+                  class="choose-plan-btn"
+                  *ngIf="isPlanAvailable(plan)"
+                  (click)="openPaymentModal(plan); $event.stopPropagation()">
+            {{translateService.getText('account.subscribe.choosePlan')}}
+          </button>
+          <p class="muted unavailable-text" *ngIf="!isPlanAvailable(plan)">
             {{translateService.getText('account.subscribe.unavailable')}}
           </p>
         </div>
@@ -51,4 +60,77 @@
       {{translateService.getText('subscription.plans.empty')}}
     </p>
   </div>
+</div>
+
+<div class="payment-modal-backdrop" *ngIf="selectedPlan" (click)="closePaymentModal()">
+  <div class="payment-modal" [class.payment-busy]="paymentLoading" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <button type="button" class="modal-close" (click)="closePaymentModal()" [attr.aria-label]="translateService.getText('account.subscribe.close')">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="modal-header">
+      <h2>{{translateService.getText('account.subscribe.paymentTitle')}}</h2>
+      <p class="modal-plan-name">{{ selectedPlan.accountType?.name || selectedPlan.payPalPlanId }}</p>
+      <p class="modal-plan-price">
+        {{ selectedPlan.price | currency:selectedPlan.currency }}
+        <span>/ {{ translateService.formatBillingFrequency(selectedPlan.billingFrequency) }}</span>
+      </p>
+      <div class="modal-trial" *ngIf="selectedPlan.hasTrial">
+        <mat-icon>card_giftcard</mat-icon>
+        <span>{{translateService.getText('account.subscribe.trial')}}: {{ selectedPlan.trialDays }} {{translateService.getText('subscription.plans.days')}}</span>
+      </div>
+    </div>
+
+    <div class="paypal-alert" *ngIf="paymentError">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{translateService.getText('account.subscribe.paypalError')}}</span>
+    </div>
+
+    <div class="payment-panel" [class.payment-panel-loading]="paymentLoading">
+      <div class="payment-loading" *ngIf="paymentLoading">
+        <mat-spinner diameter="36"></mat-spinner>
+      </div>
+
+      <p class="panel-hint provider-pick-hint" *ngIf="showProviderChoice">
+        {{translateService.getText('account.subscribe.providerHint')}}
+      </p>
+
+      <div class="provider-tabs" *ngIf="supportsBothProviders(selectedPlan!) && !paymentLoading">
+        <button type="button"
+                class="provider-tab"
+                [class.active]="checkoutProvider === 'onvo'"
+                (click)="selectProvider('onvo')">
+          <mat-icon>credit_card</mat-icon>
+          {{translateService.getText('account.subscribe.providerOnvo')}}
+        </button>
+        <button type="button"
+                class="provider-tab"
+                [class.active]="checkoutProvider === 'paypal'"
+                (click)="selectProvider('paypal')">
+          <mat-icon>account_balance_wallet</mat-icon>
+          {{translateService.getText('account.subscribe.providerPaypal')}}
+        </button>
+      </div>
+
+      <ng-container *ngIf="checkoutProvider === 'onvo'">
+        <p class="panel-hint">{{translateService.getText('account.subscribe.payWithCard') || 'Paga con tarjeta'}}</p>
+        <div id="onvo-checkout-container" class="onvo-container"></div>
+      </ng-container>
+
+      <ng-container *ngIf="checkoutProvider === 'paypal'">
+        <p class="panel-hint">{{translateService.getText('account.subscribe.payWithPayPal')}}</p>
+        <div class="paypal-container" id="modal-paypal-button"></div>
+
+        <div class="card-section">
+          <p class="panel-hint card-label">{{translateService.getText('account.subscribe.payWithCard')}}</p>
+          <p class="card-hint">{{translateService.getText('account.subscribe.cardHint')}}</p>
+          <div class="paypal-container" id="modal-card-button"></div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div class="page-loading-overlay" *ngIf="loading && selectedPlan">
+  <mat-spinner diameter="48"></mat-spinner>
 </div>

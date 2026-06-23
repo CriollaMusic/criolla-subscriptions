@@ -23,6 +23,35 @@
   flex: 1 1 auto;
 }
 
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #fff3ee;
+  border: 1px solid rgba(255, 87, 34, 0.25);
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: #ff5722;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lang-btn.active {
+  background: #ff5722;
+  color: #fff;
+}
+
 .logout-btn {
   color: #ff5722;
   display: inline-flex;

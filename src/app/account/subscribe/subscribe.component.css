@@ -112,6 +112,10 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
+.plan-card.plan-selectable {
+  cursor: pointer;
+}
+
 .plan-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 40px rgba(244, 81, 30, 0.18), 0 4px 12px rgba(0, 0, 0, 0.07);
@@ -189,14 +193,272 @@
 
 .plan-foot {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 16px;
+}
+
+.choose-plan-btn {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(120deg, #ff7043 0%, #ff5722 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+}
+
+.choose-plan-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 87, 34, 0.42);
+}
+
+.unavailable-text {
+  font-size: 13px;
+  margin: 0;
+}
+
+.plan-highlighted {
+  border: 2px solid #ff5722;
+  box-shadow: 0 12px 32px rgba(255, 87, 34, 0.28);
+}
+
+.plan-selected-badge {
+  display: inline-block;
+  margin: 8px 0 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fff3e0;
+  color: #e64a19;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pay-label {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.card-label {
+  margin-top: 16px;
+}
+
+.card-section {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.card-hint {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 1.4;
 }
 
 .paypal-container {
   min-height: 45px;
 }
 
+.onvo-container {
+  min-height: 220px;
+  width: 100%;
+}
+
 .empty-plans {
   text-align: center;
   padding: 40px 0;
+}
+
+/* Payment modal */
+.payment-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.payment-modal {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 20px 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.modal-header {
+  text-align: center;
+  padding: 0 28px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #2b2b2b;
+}
+
+.modal-plan-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff5722;
+}
+
+.modal-plan-price {
+  margin: 6px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #2b2b2b;
+}
+
+.modal-plan-price span {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-trial {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.modal-trial mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.payment-panel {
+  position: relative;
+  min-height: 120px;
+}
+
+.provider-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.provider-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(255, 87, 34, 0.35);
+  border-radius: 12px;
+  background: #fff7f3;
+  color: #2b2b2b;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.provider-tab:hover {
+  background: #ffe9dd;
+  border-color: rgba(255, 87, 34, 0.55);
+}
+
+.provider-tab mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #ff5722;
+}
+
+.provider-tab.active {
+  border-color: #ff5722;
+  background: #ff5722;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+}
+
+.provider-tab.active mat-icon {
+  color: #fff;
+}
+
+.provider-pick-hint {
+  margin: 0 0 1rem;
+  text-align: center;
+}
+
+.payment-panel-loading {
+  pointer-events: none;
+}
+
+.payment-panel-loading .panel-hint,
+.payment-panel-loading .card-section,
+.payment-panel-loading .paypal-container {
+  visibility: hidden;
+}
+
+.payment-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.panel-hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+}
+
+.page-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

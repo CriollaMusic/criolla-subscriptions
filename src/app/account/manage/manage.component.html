@@ -45,6 +45,11 @@
           <span class="status-badge status-{{ subscription.status }}">{{ subscription.status }}</span>
         </div>
 
+        <p class="provider-badge" *ngIf="subscription.paymentProvider">
+          <mat-icon>payments</mat-icon>
+          <span>{{ translateService.getText('account.manage.paymentProvider') || 'Payment provider' }}: {{ subscription.paymentProvider }}</span>
+        </p>
+
         <div class="price-row" *ngIf="subscription.plan?.price != null">
           <span class="price">{{ subscription.plan?.price | currency:subscription.currency }}</span>
           <span class="price-period">/ {{translateService.getText('account.manage.perMonth')}}</span>

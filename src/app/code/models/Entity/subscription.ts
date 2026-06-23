@@ -8,6 +8,8 @@ export class Subscription {
     id!: number;
     userId!: number;
     payPalSubscriptionId!: string;
+    billingSource?: string;
+    paymentProvider?: string;
     plan?: SubscriptionPlanSummary;
     status!: string;
     startDate?: string;

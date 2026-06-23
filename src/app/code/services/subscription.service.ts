@@ -50,4 +50,41 @@ export class SubscriptionService extends BaseService<Subscription> {
       subscriptionId
     });
   }
+
+  getOnvoConfig(): Observable<{ publishableKey: string; enabled: boolean }> {
+    return this.http.get<{ publishableKey: string; enabled: boolean }>(
+      `${environment.userApi}Subscription/onvo/config`);
+  }
+
+  createOnvoSession(userId: number, planId: number): Observable<{
+    customerId: string;
+    subscriptionId: string;
+    publishableKey: string;
+  }> {
+    return this.http.post<{
+      customerId: string;
+      subscriptionId: string;
+      publishableKey: string;
+    }>(`${environment.userApi}Subscription/onvo/create-session`, { userId, planId });
+  }
+
+  onvoWebSubscribe(userId: number, planId: number, subscriptionId: string): Observable<Subscription> {
+    return this.http.post<Subscription>(`${environment.userApi}Subscription/onvo/web-subscribe`, {
+      userId,
+      planId,
+      subscriptionId
+    });
+  }
+
+  /**
+   * Option B: start merchant-initiated subscription with a saved vault payment method.
+   * POST /Subscription/merchant-start
+   */
+  merchantStart(userId: number, planId: number, paymentMethodId: number): Observable<any> {
+    return this.http.post(`${environment.userApi}Subscription/merchant-start`, {
+      userId,
+      planId,
+      paymentMethodId
+    });
+  }
 }

@@ -3,6 +3,20 @@
     <img src="assets/criolla_logo.svg" alt="Criolla Music" class="brand-logo" />
   </a>
   <span class="spacer"></span>
+  <div class="language-switch" role="group" [attr.aria-label]="translateService.getText('app.language.label')">
+    <button type="button"
+            class="lang-btn"
+            [class.active]="translateService.isCurrentLanguage('es')"
+            (click)="setLanguage('es')">
+      ES
+    </button>
+    <button type="button"
+            class="lang-btn"
+            [class.active]="translateService.isCurrentLanguage('eng')"
+            (click)="setLanguage('eng')">
+      EN
+    </button>
+  </div>
   <button *ngIf="isLoggedIn" mat-button class="logout-btn" (click)="logout()">
     <mat-icon>logout</mat-icon>
     <span>{{ translateService.getText('account.logout') }}</span>

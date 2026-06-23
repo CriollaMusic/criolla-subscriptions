@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ApplicationRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticatedDto } from './code/models/shared/AuthenticatedDto';
 import { AppBridgeService } from './code/services/app-bridge.service';
-import { TranslateService } from './code/services/translate.service';
+import { AppLanguage, TranslateService } from './code/services/translate.service';
 import { UserService } from './code/services/user.service';
 
 @Component({
@@ -18,9 +18,17 @@ export class AppComponent implements OnInit {
     private userService: UserService,
     public translateService: TranslateService,
     private appBridge: AppBridgeService,
-    private router: Router) { }
+    private router: Router,
+    private appRef: ApplicationRef) { }
 
   ngOnInit(): void {
+    this.translateService.initializeLanguage();
+    this.translateService.languageLoaded.subscribe(loaded => {
+      if (loaded) {
+        this.appRef.tick();
+      }
+    });
+
     // Capture the native-app marker (`?from=app`) before the router strips it,
     // so we can deep-link back to the app after a confirmed subscription.
     this.appBridge.captureReturnFlag();
@@ -47,5 +55,9 @@ export class AppComponent implements OnInit {
     this.userService.loggedUser.next(undefined);
     this.userService.$authenticated.next(false);
     this.router.navigate(['/login']);
+  }
+
+  setLanguage(lang: AppLanguage): void {
+    this.translateService.setLanguage(lang);
   }
 }
