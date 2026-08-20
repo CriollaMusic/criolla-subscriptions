@@ -3,7 +3,8 @@ export const environment = {
   // Local dev uses a RELATIVE path so the Angular dev-server proxy (proxy.conf.json)
   // forwards API calls to https://api.criollamusic.com server-side, avoiding CORS.
   userApi: '/UserService/',
-  // LIVE PayPal client id (browser JS SDK). Completing a checkout creates a REAL subscription.
+  // PayPal checkout is kept in the codebase but hidden until this is true.
+  paypalEnabled: false,
   payPalClientId: 'ARygiRmayqpNAlPsKGyqdaJyUXs_wDvpDq4Za4hWT-BHbyA8hHVydqplVLL6U6lNRPkq__E0BkSZuXOj',
   payPalEnvironment: 'live',
   payPalCurrency: 'USD',

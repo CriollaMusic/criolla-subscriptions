@@ -14,6 +14,14 @@ body {
   z-index: 20000 !important;
 }
 
+/* ONVO 3DS overlay is a full-viewport iframe at z-index 99999.
+   Do not clip it, and keep it above the checkout modal. */
+iframe[style*="z-index:99999"],
+iframe[style*="z-index: 99999"] {
+  z-index: 2147483000 !important;
+  pointer-events: auto !important;
+}
+
 /* Brand the Material "primary" raised button (login submit) with Criolla orange */
 .mat-mdc-raised-button.mat-primary {
   --mdc-protected-button-container-color: #ff5722;

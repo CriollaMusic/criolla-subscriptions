@@ -62,9 +62,9 @@
   </div>
 </div>
 
-<div class="payment-modal-backdrop" *ngIf="selectedPlan" (click)="closePaymentModal()">
-  <div class="payment-modal" [class.payment-busy]="paymentLoading" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
-    <button type="button" class="modal-close" (click)="closePaymentModal()" [attr.aria-label]="translateService.getText('account.subscribe.close')">
+<div class="payment-modal-backdrop" *ngIf="selectedPlan" (click)="!confirmingPayment && closePaymentModal()">
+  <div class="payment-modal" [class.payment-busy]="paymentLoading || confirmingPayment" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <button type="button" class="modal-close" (click)="closePaymentModal()" [disabled]="confirmingPayment" [attr.aria-label]="translateService.getText('account.subscribe.close')">
       <mat-icon>close</mat-icon>
     </button>
 
@@ -81,21 +81,25 @@
       </div>
     </div>
 
-    <div class="paypal-alert" *ngIf="paymentError">
+    <div class="paypal-alert confirming" *ngIf="confirmingPayment">
+      <mat-spinner diameter="22"></mat-spinner>
+      <span>{{ paymentErrorMessage || translateService.getText('account.subscribe.confirming') }}</span>
+    </div>
+    <div class="paypal-alert" *ngIf="paymentError && !confirmingPayment">
       <mat-icon>error_outline</mat-icon>
-      <span>{{translateService.getText('account.subscribe.paypalError')}}</span>
+      <span>{{ paymentErrorMessage || translateService.getText('account.subscribe.paypalError') }}</span>
     </div>
 
-    <div class="payment-panel" [class.payment-panel-loading]="paymentLoading">
+    <div class="payment-panel" [class.payment-panel-loading]="paymentLoading" [hidden]="confirmingPayment">
       <div class="payment-loading" *ngIf="paymentLoading">
         <mat-spinner diameter="36"></mat-spinner>
       </div>
 
-      <p class="panel-hint provider-pick-hint" *ngIf="showProviderChoice">
+      <p class="panel-hint provider-pick-hint" *ngIf="paypalEnabled && showProviderChoice">
         {{translateService.getText('account.subscribe.providerHint')}}
       </p>
 
-      <div class="provider-tabs" *ngIf="supportsBothProviders(selectedPlan!) && !paymentLoading">
+      <div class="provider-tabs" *ngIf="paypalEnabled && supportsBothProviders(selectedPlan!) && !paymentLoading">
         <button type="button"
                 class="provider-tab"
                 [class.active]="checkoutProvider === 'onvo'"
@@ -117,7 +121,7 @@
         <div id="onvo-checkout-container" class="onvo-container"></div>
       </ng-container>
 
-      <ng-container *ngIf="checkoutProvider === 'paypal'">
+      <ng-container *ngIf="paypalEnabled && checkoutProvider === 'paypal'">
         <p class="panel-hint">{{translateService.getText('account.subscribe.payWithPayPal')}}</p>
         <div class="paypal-container" id="modal-paypal-button"></div>
 

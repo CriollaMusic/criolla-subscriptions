@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -20,6 +20,8 @@ import { TranslateService } from 'src/app/code/services/translate.service';
 
 import { UserService } from 'src/app/code/services/user.service';
 
+import { environment } from 'src/environments/environment';
+
 
 
 @Component({
@@ -39,6 +41,9 @@ export class SubscribeComponent implements OnInit {
   loading = false;
 
   paymentError = false;
+  paymentErrorMessage = '';
+  confirmingPayment = false;
+  private confirmPollCancelled = false;
 
   plans: Array<SubscriptionPlan> = new Array<SubscriptionPlan>();
 
@@ -72,6 +77,8 @@ export class SubscribeComponent implements OnInit {
 
     private route: ActivatedRoute,
 
+    private ngZone: NgZone,
+
     private cdr: ChangeDetectorRef) { }
 
 
@@ -82,11 +89,14 @@ export class SubscribeComponent implements OnInit {
 
     if (!user || !user.id) {
 
-      const returnUrl = this.route.snapshot.queryParamMap.get('planId')
-
-        ? `/subscribe?planId=${this.route.snapshot.queryParamMap.get('planId')}`
-
-        : '/subscribe';
+      const params = new URLSearchParams();
+      this.route.snapshot.queryParamMap.keys.forEach(key => {
+        const value = this.route.snapshot.queryParamMap.get(key);
+        if (value) {
+          params.set(key, value);
+        }
+      });
+      const returnUrl = params.toString() ? `/subscribe?${params.toString()}` : '/subscribe';
 
       this.router.navigate(['/login'], { queryParams: { returnUrl } });
 
@@ -138,7 +148,14 @@ export class SubscribeComponent implements OnInit {
 
         this.scrollToHighlightedPlan();
 
-
+        const onvoSid = this.route.snapshot.queryParamMap.get('sid');
+        if (this.route.snapshot.queryParamMap.get('onvo') === '3ds' && onvoSid) {
+          const plan = this.plans.find(p => p.id === this.highlightedPlanId) || this.plans[0];
+          if (plan) {
+            this.onOnvoSubscriptionApproved(plan, onvoSid);
+          }
+          return;
+        }
 
         if (this.highlightedPlanId) {
 
@@ -192,9 +209,13 @@ export class SubscribeComponent implements OnInit {
 
 
 
+  get paypalEnabled(): boolean {
+    return !!environment.paypalEnabled;
+  }
+
   usesPayPal(plan: SubscriptionPlan): boolean {
 
-    if (!plan.payPalPlanId) {
+    if (!this.paypalEnabled || !plan.payPalPlanId) {
 
       return false;
 
@@ -227,7 +248,8 @@ export class SubscribeComponent implements OnInit {
   }
 
   supportsBothProviders(plan: SubscriptionPlan): boolean {
-    return (plan.paymentProvider || '').toUpperCase() === 'BOTH'
+    return this.paypalEnabled
+      && (plan.paymentProvider || '').toUpperCase() === 'BOTH'
       && !!plan.onvoPriceId
       && !!plan.payPalPlanId;
   }
@@ -237,8 +259,11 @@ export class SubscribeComponent implements OnInit {
   }
 
   selectProvider(provider: 'onvo' | 'paypal'): void {
+    if (provider === 'paypal' && !this.paypalEnabled) {
+      return;
+    }
     this.checkoutProvider = provider;
-    this.paymentError = false;
+    this.clearPaymentError();
     this.cdr.detectChanges();
     void this.loadPaymentButtons();
   }
@@ -259,7 +284,7 @@ export class SubscribeComponent implements OnInit {
 
     this.highlightedPlanId = plan.id;
 
-    this.paymentError = false;
+    this.clearPaymentError();
 
     this.checkoutProvider = this.supportsBothProviders(plan)
       ? null
@@ -278,19 +303,14 @@ export class SubscribeComponent implements OnInit {
 
 
   closePaymentModal(): void {
-
+    this.confirmPollCancelled = true;
+    this.confirmingPayment = false;
     this.clearPaymentContainers();
-
     this.selectedPlan = null;
-
     this.checkoutProvider = null;
-
     this.paymentLoading = false;
-
     document.body.style.overflow = '';
-
     this.cdr.detectChanges();
-
   }
 
 
@@ -362,9 +382,7 @@ export class SubscribeComponent implements OnInit {
       }
 
     } catch {
-
-      this.paymentError = true;
-
+      this.showPaymentError('account.subscribe.paypalError');
     } finally {
 
       this.paymentLoading = false;
@@ -393,6 +411,10 @@ export class SubscribeComponent implements OnInit {
 
       this.subscriptionService.createOnvoSession(user.id, plan.id));
 
+    if (!session.paymentIntentId) {
+      throw new Error('ONVO session missing paymentIntentId');
+    }
+
 
 
     const onvo = await this.onvoLoader.load();
@@ -413,22 +435,36 @@ export class SubscribeComponent implements OnInit {
 
       publicKey: session.publishableKey,
 
+      // Confirm the invoice payment intent. Subscription-mode /api/pay was
+      // returning the incomplete session without attaching a card.
+      paymentType: 'one_time',
+
+      paymentIntentId: session.paymentIntentId,
+
       subscriptionId: session.subscriptionId,
 
       customerId: session.customerId,
 
-      paymentType: 'subscription',
-
       locale: this.translateService.onvoLocale,
 
-      onSuccess: () => this.onOnvoSubscriptionApproved(plan, session.subscriptionId),
+      returnUrl: `${window.location.origin}/subscribe?onvo=3ds&planId=${plan.id}&sid=${encodeURIComponent(session.subscriptionId)}`,
 
-      onError: () => {
-
-        this.paymentError = true;
-
-        this.cdr.detectChanges();
-
+      onSuccess: (data: unknown) => {
+        this.ngZone.run(() => {
+          if (this.handleOnvoChallenge(data)) {
+            return;
+          }
+          this.clearPaymentError();
+          this.waitForOnvoConfirmation(plan, session.subscriptionId);
+        });
+      },
+      onError: (data: unknown) => {
+        this.ngZone.run(() => {
+          if (this.handleOnvoChallenge(data)) {
+            return;
+          }
+          this.onOnvoPayError(data, plan, session.subscriptionId);
+        });
       }
 
     }).render('#onvo-checkout-container');
@@ -438,6 +474,10 @@ export class SubscribeComponent implements OnInit {
 
 
   private async loadPayPalCheckout(plan: SubscriptionPlan): Promise<void> {
+
+    if (!this.paypalEnabled) {
+      throw new Error('PayPal checkout is disabled.');
+    }
 
     const paypal = await this.paypalLoader.load();
 
@@ -604,46 +644,62 @@ export class SubscribeComponent implements OnInit {
 
 
   private onOnvoSubscriptionApproved(plan: SubscriptionPlan, subscriptionId: string): void {
+    this.waitForOnvoConfirmation(plan, subscriptionId);
+  }
 
+  private async waitForOnvoConfirmation(plan: SubscriptionPlan, subscriptionId: string): Promise<void> {
     const user = this.userService.loggedUser.value;
-
-    if (!user || !user.id) {
-
+    if (!user?.id) {
       return;
-
     }
 
+    this.confirmPollCancelled = false;
+    this.confirmingPayment = true;
+    this.showPaymentError('account.subscribe.confirming');
+    this.cdr.detectChanges();
 
-
-    this.loading = true;
-
-    this.subscriptionService.onvoWebSubscribe(user.id, plan.id, subscriptionId).subscribe({
-
-      next: () => {
-
-        this.loading = false;
-
-        this.closePaymentModal();
-
-        this.showSuccessAndReturn(subscriptionId);
-
-      },
-
-      error: () => {
-
-        this.loading = false;
-
-        this.showError();
-
+    const deadline = Date.now() + 150000;
+    while (!this.confirmPollCancelled && Date.now() < deadline) {
+      try {
+        const status = await firstValueFrom(this.subscriptionService.getOnvoStatus(subscriptionId));
+        if (status?.isPaid) {
+          const recorded = await firstValueFrom(
+            this.subscriptionService.onvoWebSubscribe(user.id, plan.id, subscriptionId));
+          if (this.confirmPollCancelled) {
+            return;
+          }
+          if (recorded?.status && recorded.status !== 'ACTIVE') {
+            await new Promise(resolve => setTimeout(resolve, 4000));
+            continue;
+          }
+          this.confirmingPayment = false;
+          this.clearPaymentError();
+          this.closePaymentModal();
+          this.showSuccessAndReturn(subscriptionId);
+          return;
+        }
+      } catch {
+        // Keep polling through transient API errors while the bank finishes.
       }
 
-    });
+      await new Promise(resolve => setTimeout(resolve, 4000));
+    }
 
+    if (this.confirmPollCancelled) {
+      return;
+    }
+
+    this.confirmingPayment = false;
+    this.showPaymentError('account.subscribe.notConfirmed');
   }
 
 
 
   private showSuccessAndReturn(subscriptionId: string): void {
+
+    if (!this.appBridge.returnToApp(subscriptionId)) {
+      this.router.navigate(['/manage']);
+    }
 
     const alert = new AlertItem();
 
@@ -651,15 +707,7 @@ export class SubscribeComponent implements OnInit {
 
     alert.text = this.translateService.getText('account.subscribe.success');
 
-    alert.Show().then(() => {
-
-      if (!this.appBridge.returnToApp(subscriptionId)) {
-
-        this.router.navigate(['/manage']);
-
-      }
-
-    });
+    alert.Show();
 
   }
 
@@ -675,6 +723,94 @@ export class SubscribeComponent implements OnInit {
 
     alert.Show();
 
+  }
+
+  private clearPaymentError(): void {
+    this.paymentError = false;
+    this.paymentErrorMessage = '';
+  }
+
+  private showPaymentError(messageKey: string): void {
+    this.paymentError = true;
+    this.paymentErrorMessage = this.translateService.getText(messageKey);
+    this.cdr.detectChanges();
+  }
+
+  private isOnvoPaid(data: unknown): boolean {
+    const payload = (data || {}) as Record<string, any>;
+    const status = String(payload['status'] || '').toLowerCase();
+    if (status === 'succeeded' || status === 'processing' || status === 'active' || status === 'trialing') {
+      return true;
+    }
+    const intentStatus = String(payload['paymentIntent']?.status || '').toLowerCase();
+    return intentStatus === 'succeeded' || intentStatus === 'processing';
+  }
+
+  private isUnpaidOnvoSession(data: unknown): boolean {
+    const payload = (data || {}) as {
+      status?: string;
+      paymentMethodId?: string | null;
+      latestInvoice?: { attempted?: boolean; lastPaymentAttempt?: unknown };
+    };
+    if (payload.status !== 'incomplete') {
+      return false;
+    }
+    if (payload.paymentMethodId) {
+      return false;
+    }
+    const invoice = payload.latestInvoice;
+    if (invoice && invoice.attempted === false && !invoice.lastPaymentAttempt) {
+      return true;
+    }
+    return !payload.paymentMethodId;
+  }
+
+  private onOnvoPayError(data: unknown, plan: SubscriptionPlan, subscriptionId: string): void {
+    const payload = (data || {}) as {
+      status?: string;
+      code?: string;
+      type?: string;
+      details?: { card?: { reason?: string } };
+    };
+
+    if (payload.status === 'incomplete' && !payload.code && !payload.details?.card) {
+      return;
+    }
+
+    const reason = payload.details?.card?.reason;
+    if (reason === 'issuer_declined') {
+      this.showPaymentError('account.subscribe.cardDeclined');
+      return;
+    }
+
+    if (payload.code === 'cards.invalid_card_info') {
+      this.showPaymentError('account.subscribe.cardInvalid');
+      return;
+    }
+
+    this.waitForOnvoConfirmation(plan, subscriptionId);
+  }
+
+  private handleOnvoChallenge(data: unknown): boolean {
+    const payload = (data || {}) as Record<string, any>;
+    const intent = payload['paymentIntent'] || payload;
+    const status = intent?.status || payload['status'];
+    const next = intent?.nextAction || payload['nextAction'] || payload['next_action'];
+    if (status !== 'requires_action' && !next) {
+      return false;
+    }
+
+    const url = next?.redirectToUrl?.url
+      || next?.redirect_to_url?.url
+      || next?.url;
+    if (typeof url === 'string' && url.length > 0) {
+      this.showPaymentError('account.subscribe.threeDs');
+      window.location.assign(url);
+      return true;
+    }
+
+    this.showPaymentError('account.subscribe.threeDs');
+    return true;
   }
 
 }

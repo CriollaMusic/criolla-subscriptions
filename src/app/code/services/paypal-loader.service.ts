@@ -12,8 +12,16 @@ export class PaypalLoaderService {
 
   private loadPromise?: Promise<any>;
 
+  isEnabled(): boolean {
+    return !!environment.paypalEnabled;
+  }
+
   /** PayPal Subscriptions SDK — load once per page session. */
   load(): Promise<any> {
+    if (!this.isEnabled()) {
+      return Promise.reject(new Error('PayPal checkout is disabled.'));
+    }
+
     if (window.paypal) {
       return Promise.resolve(window.paypal);
     }

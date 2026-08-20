@@ -16,6 +16,8 @@ export interface OnvoPayConfig {
   paymentType: 'one_time' | 'subscription';
   locale?: 'es' | 'en';
   manualSubmit?: boolean;
+  /** Used when the issuer requires 3DS and ONVO redirects back to the site. */
+  returnUrl?: string;
   onSuccess: (data: unknown) => void;
   onError: (data: unknown) => void;
 }

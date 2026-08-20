@@ -60,11 +60,13 @@ export class SubscriptionService extends BaseService<Subscription> {
     customerId: string;
     subscriptionId: string;
     publishableKey: string;
+    paymentIntentId?: string;
   }> {
     return this.http.post<{
       customerId: string;
       subscriptionId: string;
       publishableKey: string;
+      paymentIntentId?: string;
     }>(`${environment.userApi}Subscription/onvo/create-session`, { userId, planId });
   }
 
@@ -74,6 +76,20 @@ export class SubscriptionService extends BaseService<Subscription> {
       planId,
       subscriptionId
     });
+  }
+
+  getOnvoStatus(subscriptionId: string): Observable<{
+    status: string;
+    mappedStatus: string;
+    isPaid: boolean;
+    paymentIntentId?: string;
+  }> {
+    return this.http.get<{
+      status: string;
+      mappedStatus: string;
+      isPaid: boolean;
+      paymentIntentId?: string;
+    }>(`${environment.userApi}Subscription/onvo/status/${encodeURIComponent(subscriptionId)}`);
   }
 
   /**

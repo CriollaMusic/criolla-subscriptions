@@ -2,7 +2,8 @@ export const environment = {
   production: true,
   // Criolla UserService API (handles auth + subscriptions). Trailing slash required.
   userApi: 'https://api.criollamusic.com/UserService/',
-  // LIVE PayPal client id (browser JS SDK). Completing a checkout creates a REAL subscription.
+  // PayPal checkout is kept in the codebase but hidden until this is true.
+  paypalEnabled: false,
   payPalClientId: 'ARygiRmayqpNAlPsKGyqdaJyUXs_wDvpDq4Za4hWT-BHbyA8hHVydqplVLL6U6lNRPkq__E0BkSZuXOj',
   payPalEnvironment: 'live',
   payPalCurrency: 'USD',
