@@ -23,20 +23,26 @@
     <ng-container *ngIf="loaded && !loading">
 
       <!-- No active subscription -->
-      <mat-card *ngIf="!subscription" class="card empty-card">
+      <mat-card *ngIf="!hasVisibleSubscription" class="card empty-card">
         <div class="empty-icon">
           <mat-icon>workspace_premium</mat-icon>
         </div>
         <h2 class="empty-title">{{translateService.getText('account.manage.none')}}</h2>
         <p class="muted">{{translateService.getText('account.manage.emptyHint')}}</p>
-        <button class="btn-orange" (click)="goToPlans()">
-          <mat-icon>add_circle</mat-icon>
-          <span>{{translateService.getText('account.manage.subscribe')}}</span>
-        </button>
+        <div class="empty-actions">
+          <button class="btn-orange" (click)="goToPlans()">
+            <mat-icon>add_circle</mat-icon>
+            <span>{{translateService.getText('account.manage.subscribe')}}</span>
+          </button>
+          <button type="button" class="btn-ghost" (click)="load()">
+            <mat-icon>sync</mat-icon>
+            <span>{{translateService.getText('account.manage.refresh')}}</span>
+          </button>
+        </div>
       </mat-card>
 
       <!-- Active subscription -->
-      <mat-card *ngIf="subscription" class="card detail-card">
+      <mat-card *ngIf="hasVisibleSubscription" class="card detail-card">
         <div class="detail-head">
           <div class="plan-info">
             <span class="plan-name">{{ subscription.plan?.name || translateService.getText('account.manage.plan') }}</span>
@@ -103,7 +109,7 @@
       </mat-card>
 
       <!-- Family sub-accounts (family plans only) -->
-      <mat-card class="card family-card" *ngIf="subscription && isFamilyPlan">
+      <mat-card class="card family-card" *ngIf="hasVisibleSubscription && isFamilyPlan">
         <div class="family-head">
           <div>
             <h3 class="card-section-title">{{translateService.getText('account.family.title')}}</h3>
@@ -157,7 +163,7 @@
       </mat-card>
 
       <!-- Payment history -->
-      <mat-card class="card payments-card" *ngIf="subscription">
+      <mat-card class="card payments-card" *ngIf="hasVisibleSubscription">
         <h3 class="card-section-title">{{translateService.getText('account.manage.payments.title')}}</h3>
 
         <table mat-table [dataSource]="payments" class="full-width payments-table" *ngIf="payments.length > 0">

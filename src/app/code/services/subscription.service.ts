@@ -92,6 +92,10 @@ export class SubscriptionService extends BaseService<Subscription> {
     }>(`${environment.userApi}Subscription/onvo/status/${encodeURIComponent(subscriptionId)}`);
   }
 
+  syncOnvoSubscription(userId: number): Observable<Subscription> {
+    return this.http.get<Subscription>(`${environment.userApi}Subscription/onvo/sync/${userId}`);
+  }
+
   /**
    * Option B: start merchant-initiated subscription with a saved vault payment method.
    * POST /Subscription/merchant-start

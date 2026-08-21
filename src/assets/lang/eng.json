@@ -85,7 +85,7 @@
     "account.manage.title": "My Subscription",
     "account.manage.subtitle": "Manage your Criolla Music plan, billing and payments.",
     "account.manage.none": "You don't have an active subscription yet.",
-    "account.manage.emptyHint": "Subscribe to unlock unlimited, ad-free music.",
+    "account.manage.emptyHint": "Subscribe to unlock unlimited, ad-free music. If you already paid, tap Refresh — we will check ONVO for your latest payment.",
     "account.manage.viewPlans": "View Plans",
     "account.manage.subscribe": "Subscribe Now",
     "account.manage.changePlan": "Change Plan",

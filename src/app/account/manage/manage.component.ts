@@ -78,20 +78,13 @@ export class ManageComponent implements OnInit {
     this.subscription = undefined;
     this.payments = [];
 
-    this.subscriptionService.getUserSubscription(this.userId).subscribe({
-      next: (res: Subscription) => {
-        this.subscription = res;
-        this.loaded = true;
-        this.loading = false;
-        if (this.isFamilyPlan) {
-          this.loadFamily();
-        }
-      },
+    this.subscriptionService.syncOnvoSubscription(this.userId).subscribe({
+      next: (res: Subscription) => this.afterSubscriptionLoaded(res),
       error: () => {
-        this.subscription = undefined;
-        this.familyMembers = [];
-        this.loaded = true;
-        this.loading = false;
+        this.subscriptionService.getUserSubscription(this.userId).subscribe({
+          next: (res: Subscription) => this.afterSubscriptionLoaded(res),
+          error: () => this.afterSubscriptionLoaded(undefined)
+        });
       }
     });
 
@@ -99,6 +92,22 @@ export class ManageComponent implements OnInit {
       next: (res: Array<PaymentHistory>) => this.payments = res || [],
       error: () => this.payments = []
     });
+  }
+
+  get hasVisibleSubscription(): boolean {
+    const status = this.subscription?.status;
+    return status === 'ACTIVE' || status === 'CANCELLED' || status === 'SUSPENDED';
+  }
+
+  private afterSubscriptionLoaded(res?: Subscription): void {
+    this.subscription = res;
+    this.loaded = true;
+    this.loading = false;
+    if (this.isFamilyPlan) {
+      this.loadFamily();
+    } else {
+      this.familyMembers = [];
+    }
   }
 
   get canCancel(): boolean {

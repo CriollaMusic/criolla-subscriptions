@@ -300,6 +300,38 @@
   color: #2b2b2b;
 }
 
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid rgba(0, 0, 0, 0.18);
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 20px;
+  border-radius: 24px;
+}
+
+.btn-ghost:hover {
+  background: #f7f7f7;
+}
+
+.btn-ghost mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
 /* Detail card */
 .detail-head {
   display: flex;
