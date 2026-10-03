@@ -67,9 +67,12 @@ export class ManageComponent implements OnInit {
     return (this.mainUser?.email || '?').charAt(0).toUpperCase();
   }
 
-  /** A family/"familiar" plan unlocks sub-account management. */
+  /** Family invite is for family/"familiar" plans only, never Premium. */
   get isFamilyPlan(): boolean {
     const name = (this.subscription?.plan?.name || '').toLowerCase();
+    if (name.includes('premium')) {
+      return false;
+    }
     return name.includes('famil');
   }
 

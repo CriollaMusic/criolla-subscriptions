@@ -98,8 +98,9 @@ export class TranslateService {
     const accountName = (plan.accountType?.name || '').toLowerCase();
     const frequency = (plan.billingFrequency || '').toUpperCase();
     const isYearly = frequency === 'YEARLY';
-    const isFamily = accountName.includes('famil') || accountName.includes('familiar')
-      || plan.price === 12 || plan.price === 120;
+    const isFamily = !accountName.includes('premium')
+      && (accountName.includes('famil') || accountName.includes('familiar')
+        || plan.price === 12 || plan.price === 120);
 
     let id: string;
     if (isFamily) {
